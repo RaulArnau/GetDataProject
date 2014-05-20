@@ -1,0 +1,20 @@
+GetDataProject CodeBook
+==============
+
+This file contains information about the data transformation performed by the script *run_analysis.R* located in this repository, as described in the following steps:
+
+1. **Setup.** The purpose of the script is load and clean a given dataset. It should extract some relevant information (in this case the mean and standar deviation of a set of phisical measurements taken from the mobile phone of 30 subjects performing 6 different activities: i.e. walking, standing, running, etc.). The original dataset from the experiments are loaded. They should be in the same folder than the script, uncompressed in a folder named **"./UCI HAR Dataset/"** (the dataset can be downloaded from [here] (http://archive.ics.uci.edu/ml/machine-learning-databases/00240/UCI%20HAR%20Dataset.zip)).
+2. **Load data.** According to the dataset [codebook] (http://archive.ics.uci.edu/ml/datasets/Human+Activity+Recognition+Using+Smartphones), the data is splitted in several files. There are separate files for the training and testing data subsets, as well as for the variables (*X_train.txt* and *X_test.txt*, inputs for a predicion algorithm), subjects (*subject_train.txt* and *subject_test.txt*) and the activities each subject is performing in each record (*y_train.txt* and *y_test.txt*, to be predicted). Besides, the folder contains files describing how the activities are coded and what are the phisical meaning of the input variables (*activity_labels.txt* and *features.txt*). There is also a folder with the raw inertial signals (from the gyros and accelerometers), which can be safely ignored in this analysis since all the relevant information is included in the train and test variables commented previously. Each file is loaded as a separate data frame in R.
+
+3. **Merge datasets.** Input data frames are merged appending the subject and the activity variables as a new columns to both the train and test features. Then, a new data frame is obtained by cating vertically the train and test data (containing also the new subject and validation columns).
+
+4. **Extract mean and standard deviation.** According to the experiment codebook there are variables (columns) in the data data frame containing the mean and standard value of each phisical measurement. Using the *features\_info.txt*, that contains the names of the features, a new data frame is obtained by logical indexing those columns that contain the desired mean and standard values (using grep to get the indices) . 
+
+5. **Labeling activities.** Activities are loaded as numeric values, from 1 to 6. Their correspondences with activities are described in the file *activity\_labels.txt*. These character values are used as labels in order to turn the numeric values into factors in R. 
+
+6. **Labeling features.** Features in the dataset are loaded without names. Their names are loaded separately from *features_info.txt*. Using logical indexing, only the mean and standard deviation feature names are kept. Their names are striped and cleaned in order to remove punctuation marks (such as hyphens, dots and parentheses). However, they are not made lowercase, since feature names are very long and capital letters are used in a camel-case fashion to provide information of the nature of the phisical variable.
+
+7. **Average by activity and subject.** This is the final stage of the analysis. The dataset containing only the mean and standard deviation information for each phisical feature is summarized by averaging the rows corresponding to each activity and subject. This could be done by logical indexing and averaging columnwise, but the plyr package provides a function to perform this task more eficiently in a single line: *__ddply__*. To compute the average, the function uses the activity and the subject columns to order and split the dataset, and the colMeans function to compute the average of each subset. Note that in order to use this function, activitis must be numeric, so a refactoring step is needed.
+
+8. **Saving.** The dataset obtained in the previous step is saved to a text file in the current folder.
+

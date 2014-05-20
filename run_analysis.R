@@ -99,11 +99,7 @@ datasetMeanStd.X <- dataset.X[, idx]
 featuresMeanStd <- features[idx, 2]
 
 # 3. Uses descriptive activity names to name the activities in the data set
-# According to the lecture "Editing Text Variables", names of variables should be
-#       - all lower case when possible
-#       - descriptive
-#       - not duplicated
-#       - not have underscores or dots or white spaces
+# According to the lecture "Editing Text Variables":
 #       - character values should be made into factor variables 
 #       - should be descriptive
 
@@ -112,14 +108,16 @@ featuresMeanStd <- features[idx, 2]
 # activitiesDescriptive <- gsub("_", "", tolower(activities[,2]))
 
 # ignoring the case ofuscates variable names, so just remove punctuation
-featuresDescriptive <- gsub("-", "", sub("\\(\\)", "", featuresMeanStd))
 activitiesDescriptive <- factor(gsub("_", "", activities[,2]))
 
-# 4. Appropriately labels the data set with descriptive activity names.
+# 4. Appropriately labels the data set with descriptive activity names. Again, according to the lecture, names of variables should be:
+#       - all lower case when possible
+#       - descriptive
+#       - not duplicated
+#       - not have underscores or dots or white spaces
+featuresDescriptive <- gsub("-", "", sub("\\(\\)", "", featuresMeanStd))
 colnames(datasetMeanStd.X) <- featuresDescriptive
 ActivityLabels <- factor(dataset.Y$Activity, labels=activitiesDescriptive)
-
-
 dataset <- cbind(datasetMeanStd.X, dataset.Y, dataset.Subject)
 
 
